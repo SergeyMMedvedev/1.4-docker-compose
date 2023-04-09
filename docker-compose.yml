@@ -1,0 +1,52 @@
+version: '3'
+
+volumes:
+  postgres_data:
+
+services:
+  postgresql:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "netology_stocks_products"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  dbeaver:
+    image: dbeaver/cloudbeaver:latest
+    ports:
+      - 9000:8978
+
+  web:
+    build: .
+    restart: always
+    depends_on:
+      - postgresql
+    volumes:
+      - ./build:/project/build
+      - ./static:/project/static
+      - ./media:/project/media
+    environment:
+      SECRET_KEY: django-insecure-nw^y+m^wmxza1asgk+)!ua2qx9)g+#v=6%76-9i8i(6eqiw94j
+      DEBUG: True
+      ALLOWED_HOSTS: '*'
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: netology_stocks_products
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      DB_HOST: postgresql
+      DB_PORT: 5432
+
+  nginx:
+    image: nginx:1.19.7
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./static:/project/static
+      - ./media:/project/media
+      - ./build:/project/build
+    depends_on:
+      - web

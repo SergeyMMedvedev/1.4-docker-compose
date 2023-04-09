@@ -18,7 +18,7 @@ docker-compose up -d
 Проверить доступные страницы:
 ```
 http://localhost/admin/
-http://api/v1/
-http://api/v1/test/
-http://api/v1/check/
+http://localhost/api/v1/
+http://localhost/api/v1/test/
+http://localhost/api/v1/check/
 ```
